@@ -4,7 +4,7 @@
 <%- include ('partials/header') %>
 
 <body>
-    <div class="container">
+    <div class="container" style="width: 40%;">
         <form action="/user" method="post">
             <div class="form-group">
                 <label>User name:</label>
@@ -14,7 +14,7 @@
                 <label>Password:</label>
                 <input type="password" class="form-control" name="password">
             </div>
-            <button type="submit">Submit</button>
+            <button class="btn btn-primary" type="submit">Submit</button>
         </form>
     </div>
     <%- include ('partials/scripts') %>

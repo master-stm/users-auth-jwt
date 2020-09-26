@@ -15,11 +15,21 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser()); //to parse cookies 
 
+const CheckAuth = (req,res,next) =>{
+   
+    console.log(req.headers['authorization']);
+    next()
+}
 
 //get  http://localhost:5000
 app.get('/', (req, res) => {
-    console.log(req.cookies.token);
+    
     res.render('index')
+})
+app.get('/user', (req, res) => {
+    
+    res.status(403).send('<h1>Not logged in</h1>');
+     
 })
 
 app.post('/user', (req, res) => {
@@ -27,19 +37,23 @@ app.post('/user', (req, res) => {
         username: req.body.name,
         password: req.body.password,
     })
-    NewUser.save(err => {
+    /* NewUser.save(err => {
         if (err) {
             console.log('user not saved');
         } else {
             console.log('user saved');
         }
     })
-
+ */
     const token = jwt.sign({ NewUser }, 'secretKEY')
+
     
-    res.cookie('token',token)
     res.render('users', { NewUser })
 })
+
+app.get('/new_route',CheckAuth, (req, res) => {
+    res.send('<h1>new route</h1>');
+});
 
 const port = 5000
 
