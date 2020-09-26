@@ -15,28 +15,35 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser()); //to parse cookies 
 
-const CheckAuth = (req,res,next) =>{
-   
-    console.log(req.headers['authorization']);
-    next()
+const CheckAuth = (req, res, next) => {
+
+    if (jwt.decode(req.headers.authorization.split(' ')[1], 'secretKEY').username === 'salem') {
+        next()
+    } else {
+        res.json({ message: 'not logged in' })
+    }
+
 }
 
 //get  http://localhost:5000
 app.get('/', (req, res) => {
-    
+
     res.render('index')
 })
 app.get('/user', (req, res) => {
-    
+
     res.status(403).send('<h1>Not logged in</h1>');
-     
+
 })
 
 app.post('/user', (req, res) => {
-    const NewUser = new User({
+
+    const user = {
         username: req.body.name,
         password: req.body.password,
-    })
+    }
+
+    const NewUser = new User(user)
     /* NewUser.save(err => {
         if (err) {
             console.log('user not saved');
@@ -45,13 +52,13 @@ app.post('/user', (req, res) => {
         }
     })
  */
-    const token = jwt.sign({ NewUser }, 'secretKEY')
+    const token = jwt.sign(user, 'secretKEY')
 
-    
+    console.log(token);
     res.render('users', { NewUser })
 })
 
-app.get('/new_route',CheckAuth, (req, res) => {
+app.get('/new_route', CheckAuth, (req, res) => {
     res.send('<h1>new route</h1>');
 });
 
